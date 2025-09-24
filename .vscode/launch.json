@@ -18,6 +18,25 @@
       "toolArgs": [
         "--dart-define=BACKEND_URL=https://europe-north1-tipsypal-app.cloudfunctions.net/chat"
       ]
+    },
+    {
+      "name": "TipsyPal PROD (Web/Chrome)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=BACKEND_URL=https://europe-north1-tipsypal-app.cloudfunctions.net/chat"
+      ]
+    },
+    {
+      "name": "TipsyPal DEV (Local Emulator)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=BACKEND_URL=http://127.0.0.1:5001/tipsypal-app/europe-north1/chat"
+      ]
     }
   ]
 }
+
