@@ -1,0 +1,7 @@
+{
+  // Flutter-projekt: låt Flutter/Android Studio sköta Gradle, inte VS Code-Gradle.
+  "java.import.gradle.enabled": false,
+  "gradle.server.enabled": false,
+  // Behåll Java 17 för verktyg som ändå använder JDT LS
+  "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16+8"
+}

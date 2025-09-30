@@ -1,22 +1,21 @@
+// android/app/build.gradle.kts
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // Flutter plugin ska ligga efter Android/Kotlin
+    // Flutter plugin (AGP integration)
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Om du kör en äldre struktur kan du behöva flutter { source = "../.." } (se längst ned)
+
 android {
     namespace = "com.tipsypal.app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+    // Läs versioner från Flutter (exponeras av flutter-gradle-plugin)
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         applicationId = "com.tipsypal.app"
@@ -24,42 +23,59 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
-        // Om du behöver multidex:
-        // multiDexEnabled = true
+        // multiDexEnabled = true // aktivera om du behöver det senare
     }
 
-    // 🔑 SIGNERING (läser från gradle.properties)
+    // ✅ Pinna NDK r26d (löser CMake/Clang-problemet på Windows)
+    ndkVersion = "26.3.11579264"
+
+    // ✅ Tvinga CMake 3.22.1 även om nyare finns
+    externalNativeBuild {
+        cmake {
+            version = "3.22.1"
+        }
+    }
+
+    // ✅ Java/Kotlin 17 (krävs av modern AGP/Flutter)
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    // 🔑 SIGNERING (valfritt — funkar även tomt i debug)
     signingConfigs {
         create("release") {
-            val ksFile = project.findProperty("MY_KEYSTORE") as String?
-            val ksPass = project.findProperty("MY_KEYSTORE_PASSWORD") as String?
-            val keyAlias = project.findProperty("MY_KEY_ALIAS") as String?
-            val keyPass = project.findProperty("MY_KEY_PASSWORD") as String?
+            val ksPath   = project.findProperty("MY_KEYSTORE") as String?
+            val ksPass   = project.findProperty("MY_KEYSTORE_PASSWORD") as String?
+            val alias    = project.findProperty("MY_KEY_ALIAS") as String?
+            val keyPass  = project.findProperty("MY_KEY_PASSWORD") as String?
 
-            if (ksFile != null && ksPass != null && keyAlias != null && keyPass != null) {
-                storeFile = file(ksFile)
+            if (!ksPath.isNullOrBlank() && !ksPass.isNullOrBlank() && !alias.isNullOrBlank() && !keyPass.isNullOrBlank()) {
+                storeFile = file(ksPath)
                 storePassword = ksPass
-                this.keyAlias = keyAlias
+                this.keyAlias = alias
                 keyPassword = keyPass
             } else {
-                println("⚠️ Release-signering är inte konfigurerad. Kontrollera android/gradle.properties.")
+                println("⚠️ Release-signering ej konfigurerad (android/gradle.properties). Debug funkar ändå.")
             }
         }
     }
 
     buildTypes {
         getByName("debug") {
-            // Debug kör som vanligt med debug-nycklar
+            // standard debug
         }
         getByName("release") {
-            isMinifyEnabled = false      // sätt true + proguard-files om/ när du vill krympa
+            isMinifyEnabled = false       // sätt true + proguard om/ när du vill krympa
             isShrinkResources = false
             signingConfig = signingConfigs.getByName("release")
         }
     }
 
-    // (valfritt) städa bort vissa META-INF för kompatibilitet
+    // (valfritt) rensa vissa META-INF för konflikter
     packaging {
         resources {
             excludes += setOf(
@@ -71,13 +87,13 @@ android {
     }
 }
 
+// Tala om var Flutter-modulen ligger (behövs i typiska Flutter-appar)
 flutter {
     source = "../.."
 }
 
-// Här brukar man inte behöva lägga till extra dependencies manuellt – Flutter hanterar
-// det via .gradle/.m2. Om du absolut behöver något extra, gör det så här:
-// dependencies {
-//     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.24")
-// }
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+}
+
 
