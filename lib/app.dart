@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'features/categories/presentation/screens/category_screen.dart';
+import 'features/chat/presentation/screens/category_screen.dart';
 
 class TipsyPalApp extends StatelessWidget {
   const TipsyPalApp({super.key});
@@ -8,6 +8,7 @@ class TipsyPalApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TipsyPal',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,

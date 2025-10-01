@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tipsypal/core/utils/snack.dart';
-import '../../../chat/categories/presentation/widgets/preset_buttons.dart';
-import '../../../chat/categories/presentation/widgets/prompt_input.dart';
-import '../../../chat/categories/presentation/widgets/response_box.dart';
+import '../../../../legacy/widgets/preset_buttons.dart';
+import '../../../../legacy/widgets/prompt_input.dart';
+import '../../../../legacy/widgets/response_box.dart';
 import 'package:tipsypal/features/chat/services/chat_service.dart';
 
 class ChatScreen extends StatefulWidget {
